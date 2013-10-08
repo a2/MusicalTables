@@ -1,59 +1,49 @@
-MusicalTables - It's like Musical Chairs in your UITableView #
-==============================================================
+MusicalTables
+=============
 
-Overview
---------
+*It’s like musical chairs but in your collections.*
 
-MusicalTables looks at the changes in your table source data and automatically calls deleteSections, deleteRows, insertSections, insertRows where appropriate. Just worry about the data, let MusicalTables take care of the transition.
+## Overview
 
-
-Details
--------
-
-There are two classes: MusicalTables.(m|h) and MusicalTablesSection.(m|h)
+MusicalTables looks at the changes in your table view, collection view, or other sectioned data source source data and automatically calls the appropriate methods to insert or delete sections or rows. Just worry about the data, let MusicalTables take care of the transition.
 
 
-### MusicalTables ###
+## Details
 
-#### ` + (void)musicalTables:(UITableView *)table oldContent:(NSArray *)oldContent newContent:(NSArray *)newContent;` ####
-
-Takes the existing data source for your table (oldContent), the new data source
-(newContent) and the table (table). The method compares oldContent and newContent,
-determines the differences, and performs deleteSections/insertSections 
-insertRows/deleteRows on the table accordingly.
-
-There is a prescribed schema for oldData and newData:
-     NSArray *(old|new)Content:
-         (
-             MusicalTableSection *(id row, id row, id row, id row, id row),
-             MusicalTableSection *(id row, id row),
-             MusicalTableSection *(id row, id row, id row, id row),
-         );
-
-Read about the MusicalTableSection class below for more information on it.
+There are two main classes: *MusicalTables* and *MTSection*
 
 
+### MusicalTables
 
-#### `+ (void)differenceBetweenOldArray:(NSArray *)oldArray andNewArray:(NSArray *)newArray resultingInsertions:(NSArray **)insertionsPtr resultingDeletions:(NSArray **)deletionsPtr resultingCommon:(NSArray **)commonPtr;` ####
- 
-Takes an old array (oldArray) and new array (newArray), analyses the differences 
-between the two, and sets pointers to arrays containing insertions (insertionPtrOrNil) 
-and deletions (deletionPtrOrNil) required to transition from the old array to the new
-array. An array of elements from the old array that aren't deleted is also maintained 
-(commonPtrOrNil).
+#### `+musicalTableView:withOldContent:newContent:usingComparator:`
 
 
-### MusicalTablesSection ###
+* **UITableView \*tableView**: The table view whose data will be altered.
+* **NSArray \*oldContent**: Thew table view's old content. This is an array of sections represented by instances of either `NSArray` or `MTSection`.
+* **NSArray \*newContent**: Thew table view's new content. This is an array of sections represented by instances of either `NSArray` or `MTSection`.
+* **MTComparator comparator**: The block to use when comparing objects. This will be called to determine if "row objects" are equal. To compare using `-isEqual:`, pass the `MTDefaultComparator` constant.
 
-Sections don't have to be stored as MusicalTableSelection objects. The class
-used to store sections should: 
- * Allow "tagging" so equivalent sections can be detected
- * Have an NSArray or other storage mechanism to store rows
- * Implement objectAtIndex: and count: like NSArray, so rows can be retrieved.
+#### `+musicalCollectionView:withOldContent:newContent:usingComparator:`
 
+* **UICollectionView \*collectionView**: The collection view view whose data will be altered.
+* **NSArray \*oldContent**: Thew collection view's old content. This is an array of sections represented by instances of either `NSArray` or `MTSection`.
+* **NSArray \*newContent**: Thew collection view's new content. This is an array of sections represented by instances of either `NSArray` or `MTSection`.
+* **MTComparator comparator**: The block to use when comparing objects. This will be called to determine if "row objects" are equal. To compare using `-isEqual:`, pass the `MTDefaultComparator` constant.
 
+#### `+musicalCollectionWithOldContent:newContent:usingComparator:sectionsMutation:objectsMutation:`
 
-Contributors
-------------
+* **NSArray \*oldContent**: Thew collection view's old content. This is an array of sections represented by instances of either `NSArray` or `MTSection`.
+* **NSArray \*newContent**: Thew collection view's new content. This is an array of sections represented by instances of either `NSArray` or `MTSection`.
+* **MTComparator comparator**: The block to use when comparing objects. This will be called to determine if "row objects" are equal. To compare using `-isEqual:`, pass the `MTDefaultComparator` constant.
+* **MTSectionsMutation sectionsMutation**: The block to use when inserting or deleting sections. Use this time to call the methods on your custom view.
+* **MTObjectsMutation objectsMutation**: The block to use when inserting or deleting objects in sections. Use this time to call the methods on your custom view.
 
-Created by [Tim Cinel](http://github.com/sickanimations) [web](http://timcinel.com/) [twitter](http://twitter.com/TimCinel) 
+### MTSection
+
+Section objects don't have to be stored as MTSection objects, but this class lets you assign an additional `identifier` attribute to allow tagging so equivalent sections can be detected.
+
+## Contributors
+
+Created by [Tim Cinel](http://github.com/sickanimations)
+
+Modernized by [Alexsander Akers](http://github.com/a2)
